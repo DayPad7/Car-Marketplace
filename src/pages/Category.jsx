@@ -17,6 +17,7 @@ import ListingItem from "../components/ListingItem";
 const Category = () => {
   const [listings, setListings] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [lastFetchedListing, setLastFetchedListing] = useState(null);
 
   const params = useParams();
   useEffect(() => {
@@ -33,6 +34,9 @@ const Category = () => {
         );
         //execute query
         const querySnap = await getDocs(queryListing);
+        //variable to get more listing to show -pagination
+        const lastVisible = querySnap.docs[querySnap.docs.length - 1];
+        setLastFetchedListing(lastVisible);
         const listings = [];
 
         querySnap.forEach((doc) => {
@@ -50,6 +54,44 @@ const Category = () => {
     };
     fetchListings();
   }, [params.categoryName]);
+
+  //pagination /load more
+
+  const fetchMoreListings = async () => {
+    try {
+      // get reference
+      const listingRef = collection(db, "listing");
+      // creating a query
+      const queryListing = query(
+        listingRef,
+        where("type", "==", params.categoryName),
+        orderBy("timestamp", "desc"),
+        //difference/ same function that the lastone in the useEffect
+        startAfter(lastFetchedListing),
+        limit(10)
+      );
+      //execute query
+      const querySnap = await getDocs(queryListing);
+      //variable to get more listing to show -pagination
+      const lastVisible = querySnap.docs[querySnap.docs.length - 1];
+      setLastFetchedListing(lastVisible);
+      const listings = [];
+
+      querySnap.forEach((doc) => {
+        return listings.push({
+          id: doc.id,
+          data: doc.data(),
+        });
+      });
+      //difference/if we keeped like the original one it would replace the listing
+      //with the new one and we jus want to get added to the prev listing
+      setListings((prevState) => [...prevState, ...listings]);
+      console.log("listings: ", listings);
+      setLoading(false);
+    } catch (error) {
+      toast.error("cloud not fetch listings");
+    }
+  };
 
   return (
     <div className="category">
@@ -73,6 +115,13 @@ const Category = () => {
               ))}
             </ul>
           </main>
+          <br />
+
+          {lastFetchedListing && listings.length > 10 && (
+            <p className="loadMore" onClick={fetchMoreListings}>
+              Load More
+            </p>
+          )}
         </>
       ) : (
         <p>No Listings for {params.categoryName}</p>

@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import DeleteIcon from "../assets/svg/deleteIcon.svg?react";
+import EditIcon from "../assets/svg/editIcon.svg?react";
 import SeatIcon from "../assets/svg/CarSeats.svg";
 import DoorIcon from "../assets/svg/DoorIcon.svg";
 import YearIcon from "../assets/svg/YearIcon.svg";
 
-function ListingItem({ listing, id, onDelete }) {
+function ListingItem({ listing, id, onDelete, onEdit }) {
   return (
     <li className="categoryListing">
       <Link
@@ -59,6 +60,7 @@ function ListingItem({ listing, id, onDelete }) {
           onClick={() => onDelete(listing.id, listing.name)}
         />
       )}
+      {onEdit && <EditIcon className="editIcon" onClick={() => onEdit(id)} />}
     </li>
   );
 }

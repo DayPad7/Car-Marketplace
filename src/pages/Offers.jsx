@@ -17,6 +17,7 @@ import ListingItem from "../components/ListingItem";
 const Offers = () => {
   const [listings, setListings] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [lastFetchedListing, setLastFetchedListing] = useState(null);
 
   const params = useParams();
   useEffect(() => {
@@ -34,6 +35,8 @@ const Offers = () => {
         //execute query
         const querySnap = await getDocs(queryListing);
         const listings = [];
+        const lastVisible = querySnap.docs[querySnap.docs.length - 1];
+        setLastFetchedListing(lastVisible);
 
         querySnap.forEach((doc) => {
           return listings.push({
@@ -50,6 +53,41 @@ const Offers = () => {
     };
     fetchListings();
   }, []);
+  const fetchMoreListings = async () => {
+    try {
+      // get reference
+      const listingRef = collection(db, "listing");
+      // creating a query
+      const queryListing = query(
+        listingRef,
+        where("offer", "==", true),
+        orderBy("timestamp", "desc"),
+        //difference/ same function that the lastone in the useEffect
+        startAfter(lastFetchedListing),
+        limit(10)
+      );
+      //execute query
+      const querySnap = await getDocs(queryListing);
+      //variable to get more listing to show -pagination
+      const lastVisible = querySnap.docs[querySnap.docs.length - 1];
+      setLastFetchedListing(lastVisible);
+      const listings = [];
+
+      querySnap.forEach((doc) => {
+        return listings.push({
+          id: doc.id,
+          data: doc.data(),
+        });
+      });
+      //difference/if we keeped like the original one it would replace the listing
+      //with the new one and we jus want to get added to the prev listing
+      setListings((prevState) => [...prevState, ...listings]);
+      console.log("listings: ", listings);
+      setLoading(false);
+    } catch (error) {
+      toast.error("cloud not fetch listings");
+    }
+  };
 
   return (
     <div className="category">
@@ -71,6 +109,12 @@ const Offers = () => {
               ))}
             </ul>
           </main>
+          <br />
+          {lastFetchedListing && listings.length > 9 && (
+            <p className="loadMore" onClick={fetchMoreListings}>
+              Load More
+            </p>
+          )}
         </>
       ) : (
         <p>There are not current offers in this moment...</p>
