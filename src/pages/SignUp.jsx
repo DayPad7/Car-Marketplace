@@ -11,6 +11,7 @@ import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
 import ArrowRightIcon from "../assets/svg/keyboardArrowRightIcon.svg?react";
 import visibilityIcon from "../assets/svg/visibilityIcon.svg";
+import OAuth from "../components/OAuth";
 function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -101,7 +102,7 @@ function SignUp() {
               </button>
             </div>
           </form>
-          {/* OAuth */}
+          <OAuth />
           <Link to="/sign-in" className="registerLink">
             Sign In Instead
           </Link>
