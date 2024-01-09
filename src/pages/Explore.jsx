@@ -3,7 +3,7 @@ import rentCategoryImage from "../assets/jpg/CarForSale.webp";
 import sellCategoryImage from "../assets/jpg/CarRental.webp";
 import HomeSlider from "../components/HomeSlider";
 
-function explore() {
+function Explore() {
   return (
     <div className="explore">
       <header>
@@ -37,4 +37,4 @@ function explore() {
   );
 }
 
-export default explore;
+export default Explore;

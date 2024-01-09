@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import ForgotPassword from "./pages/ForgotPassword";
-import Explore from "./pages/explore";
+import Explore from "./pages/Explore";
 import Offers from "./pages/Offers";
 import Category from "./pages/Category";
 import CreateListing from "./pages/CreateListing";
