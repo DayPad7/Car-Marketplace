@@ -7,7 +7,6 @@ import Category from "./pages/Category";
 import CreateListing from "./pages/CreateListing";
 import Listing from "./pages/Listing";
 import EditListing from "./pages/EditListing";
-
 import Contact from "./pages/Contact";
 import Profile from "./pages/Profile";
 import SignIn from "./pages/SignIn";

@@ -18,6 +18,8 @@ function Listing() {
   const navigate = useNavigate();
   const params = useParams();
   const auth = getAuth();
+  const priceLimiter = "/B(?=(d{3})+(?!d))/g";
+
   useEffect(() => {
     const fetchListing = async () => {
       const docRef = doc(db, "listing", params.listingId);
@@ -56,12 +58,8 @@ function Listing() {
         <p className="listingName">
           {listing.name} - $
           {listing.offer
-            ? listing.discountedPrice
-                .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-            : listing.regularPrice
-                .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            ? listing.discountedPrice.toString().replace(priceLimiter, ",")
+            : listing.regularPrice.toString().replace(priceLimiter, ",")}
         </p>
         <p className="listingLocation">{listing.location}</p>
         <p className="listingType">

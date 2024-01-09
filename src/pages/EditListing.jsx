@@ -96,7 +96,7 @@ function EditListing() {
     };
     fetchListingToEdit();
   }, [params.listingId, navigate]);
-  // sets userRef to logged in us
+  // sets userRef to log in
   useEffect(() => {
     if (isMounted) {
       onAuthStateChanged(auth, (user) => {
@@ -111,6 +111,7 @@ function EditListing() {
       isMounted.current = false;
     };
   }, [isMounted]);
+
   const onSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
