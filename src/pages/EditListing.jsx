@@ -27,10 +27,10 @@ function EditListing() {
     touchScreen: false,
     offer: false,
     Radio: false,
-    doors: 0,
-    seats: 0,
+    doors: 2,
+    seats: 2,
     type: "rent",
-    year: 0,
+    year: new Date().getFullYear(),
     airbags: false,
     brand: "",
     color: "",
@@ -47,7 +47,6 @@ function EditListing() {
     offer,
     seats,
     type,
-    year,
     airbags,
     brand,
     color,
@@ -65,6 +64,8 @@ function EditListing() {
     aC,
     Bluetooth,
   } = formData;
+  const { year } = formData;
+
   const auth = getAuth();
   const navigate = useNavigate();
   const isMounted = useRef(true);
@@ -87,7 +88,8 @@ function EditListing() {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         setListings(docSnap.data());
-        setFormData({ ...docSnap.data(), address: docSnap.data().location });
+        console.log(docSnap.data());
+        setFormData({ ...docSnap.data(), address: docSnap.data().location} );
         setLoading(false);
       } else {
         navigate("/");
@@ -111,6 +113,10 @@ function EditListing() {
       isMounted.current = false;
     };
   }, [isMounted]);
+
+  const handleYearChange = (e) => {
+    setFormData({ ...formData, year: parseInt(e.target.value) });
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -307,20 +313,21 @@ function EditListing() {
             minLength="3"
             required
           />
-          <div>
-            <label className="formLabel"> Year </label>{" "}
-            <p className="imagesInfo"> (min 2010). </p>
-            {/* INVESTIGAR COMO HACER UN LABEL QUE HAGA UN DROPLIST DE AÑO EN REACT */}
-            <input
-              className="formInputSmall"
-              type="number"
-              id="year"
-              value={year}
-              onChange={onMutate}
-              min="2010"
-              required
-            />
-          </div>
+          <div >
+        <label className="formLabel">Year</label>
+        <p className="imagesInfo">(min. 2010).</p>
+        <select
+          className="formInputSmall"
+          value={year}
+          onChange={handleYearChange}
+          required
+        >
+          {/* Generar las opciones del droplist de años */}
+          {Array.from({ length: new Date().getFullYear() - 2009 }, (_, index) => (
+            <option key={index + 2010} value={index + 2010}>{index + 2010}</option>
+          ))}
+        </select>
+      </div>
           <label className="formLabel"> A/C</label>
           <div className="formButtons">
             <button
@@ -642,7 +649,7 @@ function EditListing() {
           <label className="formLabel"> Images</label>
           <p className="imagesInfo">
             {" "}
-            The firs image will be the cover (max 6).{" "}
+            The first image will be the cover (max 6).{" "}
           </p>
           <input
             className="formInputFile"

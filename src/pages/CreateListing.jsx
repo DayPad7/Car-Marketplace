@@ -31,10 +31,10 @@ function CreateListing() {
     touchScreen: false,
     offer: false,
     Radio: false,
-    doors: 0,
-    seats: 0,
+    doors: 2,
+    seats: 2,
     type: "rent",
-    year: 0,
+    year: new Date().getFullYear(),
     airbags: false,
     brand: "",
     color: "",
@@ -51,7 +51,6 @@ function CreateListing() {
     offer,
     seats,
     type,
-    year,
     airbags,
     brand,
     color,
@@ -69,6 +68,8 @@ function CreateListing() {
     aC,
     Bluetooth,
   } = formData;
+  const { year } = formData;
+
   const auth = getAuth();
   const navigate = useNavigate();
   const isMounted = useRef(true);
@@ -87,6 +88,10 @@ function CreateListing() {
       isMounted.current = false;
     };
   }, [isMounted]);
+  // Función para manejar los cambios en el droplist de años
+  const handleYearChange = (e) => {
+    setFormData({ ...formData, year: parseInt(e.target.value) });
+  };
   const onSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -281,20 +286,21 @@ function CreateListing() {
             minLength="3"
             required
           />
-          <div>
-            <label className="formLabel"> Year </label>{" "}
-            <p className="imagesInfo"> (min 2010). </p>
-            {/* INVESTIGAR COMO HACER UN LABEL QUE HAGA UN DROPLIST DE AÑO EN REACT */}
-            <input
-              className="formInputSmall"
-              type="number"
-              id="year"
-              value={year}
-              onChange={onMutate}
-              min="2010"
-              required
-            />
-          </div>
+          <div >
+        <label className="formLabel">Year</label>
+        <p className="imagesInfo">(min. 2010).</p>
+        <select
+          className="formInputSmall"
+          value={year}
+          onChange={handleYearChange}
+          required
+        >
+          {/* Generar las opciones del droplist de años */}
+          {Array.from({ length: new Date().getFullYear() - 2009 }, (_, index) => (
+            <option key={index + 2010} value={index + 2010}>{index + 2010}</option>
+          ))}
+        </select>
+      </div>
           <label className="formLabel"> A/C</label>
           <div className="formButtons">
             <button
@@ -318,8 +324,7 @@ function CreateListing() {
           </div>
 
           <div className="formRooms flex">
-            {" "}
-            {/* Cambiar nombre de classname en css y aca  */}
+
             <div>
               <label className="formLabel"> seats</label>
               <input
@@ -328,7 +333,7 @@ function CreateListing() {
                 id="seats"
                 value={seats}
                 onChange={onMutate}
-                min="1"
+                min="2"
                 max="50"
                 required
               />
@@ -346,6 +351,7 @@ function CreateListing() {
                 required
               />
             </div>
+
           </div>
 
           <label className="formLabel"> Air bags</label>
@@ -615,8 +621,8 @@ function CreateListing() {
           )}
           <label className="formLabel"> Images</label>
           <p className="imagesInfo">
-            {" "}
-            The firs image will be the cover (max 6).{" "}
+            
+            The first image will be the cover (max 6).{" "}
           </p>
           <input
             className="formInputFile"
@@ -629,7 +635,7 @@ function CreateListing() {
             required
           />
           <button type="submit" className="primaryButton createListingButton">
-            {" "}
+
             Create Listing
           </button>
         </form>
